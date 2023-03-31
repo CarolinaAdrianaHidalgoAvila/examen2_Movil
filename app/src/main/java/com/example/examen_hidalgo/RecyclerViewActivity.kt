@@ -6,6 +6,8 @@ import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -40,6 +42,18 @@ class RecyclerViewActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recycler_view)
         recyclerView.layoutManager= linearLayoutManager
         recyclerView.adapter=BookListAdapter(postList,this)
+
+        GlobalScope.launch {
+            val bookDao = AppRoomDatabase.getDatabase(applicationContext).bookDato()
+            val repository = BookRepository(bookDao)
+            repository.insert(BookT("the best seller: Android"))
+            val lista = repository.getListBooks()
+            lista.forEach {
+                Log.d("DBTEST","Id book = ${it.id}, Title: ${it.title}")
+            }
+        }
+
+
 
     }
 }
